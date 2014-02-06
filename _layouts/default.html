@@ -1,7 +1,3 @@
----
-description: 超哥在这里分享他的观点和各种兴趣爱好，以及他平时搜集整理的各种笔记。
----
-
 <!DOCTYPE html>
 <!--[if lt IE 7]>  <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>     <html class="no-js lt-ie10 lt-ie9 lt-ie8"> <![endif]-->
@@ -20,11 +16,19 @@ description: 超哥在这里分享他的观点和各种兴趣爱好，以及他�
   </head>
   <body>
     <div class="site">
-      {% include header.html %}
+      <div class="header">
+        <h1 class="title"><a href="/">{{ site.name }}</a></h1>
+        <a class="extra" href="/">回首页</a>
+      </div>
 
       {{ content }}
 
-      {% include footer.html %}
+      <div class="footer">
+        <ul class="contact">
+          <li>邮箱：<a href="mailto:clc3123@gmail.com" target="_blank">clc3123@gmail.com</a></li>
+          <li>微博：<a href="http://weibo.com/clc3123" target="_blank">clc3123</a></li>
+        </ul>
+      </div>
     </div>
     {% javascript main %}
   </body>
