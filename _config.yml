@@ -1,3 +1,4 @@
+name: 超哥的个人网站
 markdown: redcarpet
 pygments: true
 exclude:
@@ -7,4 +8,5 @@ exclude:
   - Gemfile.lock
   - Guardfile
   - Rakefile
+  - nginx.conf
 encoding: UTF-8
