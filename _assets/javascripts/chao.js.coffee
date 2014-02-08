@@ -1,4 +1,5 @@
-<!--
+console.log """
+%c
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMXOkkOXMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMd    dMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
@@ -31,31 +32,4 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMWXKXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
--->
-<!DOCTYPE html>
-<!--[if lt IE 7]>  <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>     <html class="no-js lt-ie10 lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>     <html class="no-js lt-ie10 lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>  <html class="no-js lt-ie10"> <![endif]-->
-<!--[if !IE]><!--> <html class="no-js"> <!--<![endif]-->
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>{% if page.title %}{{ page.title }} - {{ site.name }}{% else %}{{ site.name }}{% endif %}</title>
-    <meta name="author" content="clc3123@gmail.com">
-    <meta name="description" content="{% if page.description %}{{ page.description }} - {{ site.description }}{% else %}{{ site.description }}{% endif %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% stylesheet application %}
-    {% javascript modernizr-2.7.1.min %}
-  </head>
-  <body>
-    <div class="site">
-      {% include header.html %}
-
-      {{ content }}
-
-      {% include footer.html %}
-    </div>
-    {% javascript application %}
-  </body>
-</html>
+""", "color: white; background: #ff0000"
