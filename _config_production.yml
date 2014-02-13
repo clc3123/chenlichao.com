@@ -2,3 +2,6 @@ assets:
   baseurl: http://assets.chenlichao.com/
   js_compressor: uglifier
   css_compressor: sass
+  gzip:
+    - text/css
+    - application/javascript

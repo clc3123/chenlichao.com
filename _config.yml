@@ -1,7 +1,8 @@
 name: 超哥的个人网站
-description: 超哥在这里分享他的观点和各种兴趣爱好，以及他平时搜集整理的各种笔记
+description: 超哥，现居福建福州，独立IT顾问，野路子程序员，喜好阅读，坚持跑步。利用闲暇时间打理小站，分享他的观点、发现和兴趣爱好，以及他平时整理的笔记，以求增进交流，广交朋友，提升自我和社会价值。
 markdown: redcarpet
-pygments: true
+pygments: false
+relative_permalinks: false
 exclude:
   - vendor
   - bin
@@ -12,5 +13,6 @@ exclude:
   - nginx.conf
   - favicon.psd
   - favicon.png
-  - farr-better-icecream-big.jpg
 encoding: UTF-8
+assets:
+  gzip: false

@@ -33,8 +33,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 -->
 <!DOCTYPE html>
-<!--[if lt IE 7]>  <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>     <html class="no-js lt-ie10 lt-ie9 lt-ie8"> <![endif]-->
+<!--[if lt IE 8]>  <html class="no-js lt-ie10 lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>     <html class="no-js lt-ie10 lt-ie9"> <![endif]-->
 <!--[if gt IE 8]>  <html class="no-js lt-ie10"> <![endif]-->
 <!--[if !IE]><!--> <html class="no-js"> <!--<![endif]-->
@@ -44,7 +43,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
     <title>{% if page.title %}{{ page.title }} - {{ site.name }}{% else %}{{ site.name }}{% endif %}</title>
     <meta name="author" content="clc3123@gmail.com">
     <meta name="description" content="{% if page.description %}{{ page.description }} - {{ site.description }}{% else %}{{ site.description }}{% endif %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     {% stylesheet application %}
     {% javascript modernizr-2.7.1.min %}
   </head>
@@ -52,7 +51,9 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
     <div class="site">
       {% include header.html %}
 
+      <div class="main">
       {{ content }}
+      </div>
 
       {% include footer.html %}
     </div>
