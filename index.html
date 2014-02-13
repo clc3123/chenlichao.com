@@ -8,17 +8,64 @@ description: 网站的首页，集中列出所有的日志和笔记
   <section id="articles">
     <h2>日志</h2>
     <ul>
-      {% for post in site.posts %}
-        <li><span>{{ post.date | date: '%F' }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
-      {% endfor %}
+    {% for post in site.posts %}
+      <li>
+        <span class="date">{{ post.date | date: '%F' }}</span>
+        <a href="{{ post.url }}">{{ post.title }}</a>
+      </li>
+    {% endfor %}
     </ul>
   </section>
   <section id="notes">
     <h2>笔记</h2>
     <ul>
-      {% for post in site.pages %}
-        <li><a href="{{ post.url }}">{{ post.url }}</a></li>
-      {% endfor %}
+    {% assign dirstrlist = '' %}
+
+    {% for page in site.pages %}
+      {% assign parts = page.url | replace_first: '/' | split: '/' %}
+      {% if parts[0] == 'notes' %}
+        {% assign dirstr = '' %}
+        {% for part in parts %}
+          {% unless forloop.last %}
+            {% assign dirstr = dirstr | append: '/' | append: parts[forloop.index0] %}
+          {% endunless%}
+
+          {% if forloop.last %}
+            {% assign dirarray = dirstrlist | replace_first: '|' | split: '|' %}
+            {% if dirarray contains dirstr %}
+              {% continue %}
+            {% else %}
+              <li>
+              {% assign units = dirstr | replace_first: '/' | split: '/' %}
+              {% for unit in units %}
+                {% unless forloop.first %}
+                  <span class="dir">{{ unit }}</span>
+                {% endunless %}
+              {% endfor %}
+
+              {% assign dirstrlist = dirstrlist | append: '|' | append: dirstr %}
+
+              {% for spage in site.pages %}
+                {% assign sparts = spage.url | replace_first: '/' | split: '/' %}
+                {% if sparts[0] == 'notes' %}
+                  {% assign sdirstr = '' %}
+                  {% for spart in sparts %}
+                    {% unless forloop.last %}
+                      {% assign sdirstr = sdirstr | append: '/' | append: sparts[forloop.index0] %}
+                    {% endunless%}
+
+                    {% if forloop.last and sdirstr == dirstr %}
+                      <a href="{{ spage.url }}">{{ spart | replace: '.html' }}</a>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+              </li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
     </ul>
   </section>
 </div>

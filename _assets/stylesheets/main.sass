@@ -72,14 +72,29 @@ a
     border-bottom: 4px dashed $color-border
 
 .home
-  section:first-child
-    border-bottom: 4px dashed $color-border
-  ul
-    list-style: none
-    padding: 0
-    margin: 0
-  li
-    margin: 1em 0
+  section
+    overflow: hidden
+    color: $color-white
+    h2
+      float: left
+      margin: 2em 0 0
+    ul
+      list-style: none
+      padding: 0
+      margin: 0 0 0 5em
+    li
+      margin: 2em 0
+      a
+        margin-right: 1em
+    .date, .dir
+      &:after
+        content: '\00a0\00bb'
+    // .meta
+    //   color: $color-background-highlight
+    // .splitter
+    //   color: $color-background-highlight
+    &:first-child
+      border-bottom: 4px dashed $color-border
 
 // ::-webkit-scrollbar{width:8px;height:8px;}
 // ::-webkit-scrollbar-track{-webkit-box-shadow:inset 0 0 1px rgba(0, 0, 0, 0.3);background:#fff;}
@@ -135,7 +150,6 @@ code
   list-style-type: none
   margin-bottom: 2em
 
-
 .footer
   overflow: hidden
   font-size: 0.875em
@@ -165,3 +179,11 @@ code
   //   white-space: pre-wrap
   //   pre &
   //     white-space: pre-wrap
+  .home
+    section
+      h2
+        float: none
+      ul
+        width: 100%
+        margin: 0
+
