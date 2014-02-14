@@ -50,6 +50,8 @@ a
     margin: 2em 1em 0 0
     @include border-radius(5px)
     @include box-shadow(inset 0 1px 10px rgba(black, 0.4), 0 1px 0 rgba(white, 0.2))
+    span:after
+      content: '\20\2122\20'
   nav
     float: left
     margin-top: 2.5em
@@ -84,17 +86,23 @@ a
       margin: 0 0 0 5em
     li
       margin: 2em 0
-      a
-        margin-right: 1em
     .date, .dir
       &:after
-        content: '\00a0\00bb'
+        content: '\20\bb\20'
     // .meta
     //   color: $color-background-highlight
     // .splitter
     //   color: $color-background-highlight
     &:first-child
       border-bottom: 4px dashed $color-border
+
+#notes
+  a
+    margin-right: 1em
+    &:before
+      content: '#'
+      color: $color-white
+      font-size: 0.75em
 
 // ::-webkit-scrollbar{width:8px;height:8px;}
 // ::-webkit-scrollbar-track{-webkit-box-shadow:inset 0 0 1px rgba(0, 0, 0, 0.3);background:#fff;}
@@ -146,26 +154,21 @@ code
     @include border-radius(0)
     @include box-shadow(none)
 
-.posts
-  list-style-type: none
-  margin-bottom: 2em
-
 .footer
   overflow: hidden
   font-size: 0.875em
   color: $color-background-highlight
   padding: 2em 0
   border-top: 4px dashed $color-border
-  .contact
-    ul
-      list-style: none
-      padding: 0
-      margin: 0
-    li
-      float: left
-      margin-right: 1em
-    a
-      color: $color-background-highlight
+  ul
+    list-style: none
+    padding: 0
+    margin: 0
+  li
+    float: left
+    margin-right: 1em
+  a
+    color: $color-background-highlight
 
 .clearfix:before,
 .clearfix:after
@@ -186,4 +189,3 @@ code
       ul
         width: 100%
         margin: 0
-
