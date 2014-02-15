@@ -1,16 +1,9 @@
 $ ->
-  # $('.highlight').each ->
-  #   container = $(@)
-  #   count= container.find('code').text().split("\n").length - 1
-  #   $('<table><tbody><tr><td class="linenos"></td><td class="lines"></td></tr></tbody></table>').appendTo(container)
-  #   linenosTd = container.find '.linenos'
-  #   linesTd = container.find '.lines'
-  #   for nr in [1..count]
-  #     linenosTd.append $('<div class="lineno">' + nr + '</div>')
-  #   container.find('pre').appendTo(linesTd)
   $('.highlight code').html (i, html) -> 
     lines = html.split("\n")
-    ('<span class="line"><span class="content">' + l + '</span></span>' for l in lines when l).join("\n")
+    lines.shift() while /^\s*$/.test lines[0]
+    lines.pop() while /^\s*$/.test lines[lines.length - 1]
+    ('<span class="line"><span class="content">' + l + '</span></span>' for l in lines).join("\n")
 
 ( ->
     noop = ->
@@ -25,13 +18,6 @@ $ ->
     for method in methods
       if not console[method] then console[method] = noop
 )()
-
-# if window.devicePixelRatio
-#   e = $('<div id="data">')
-#   e.append $('<div>').text(window.devicePixelRatio)
-#   e.append $('<div>').text(window.screen.width)
-#   e.append $('<div>').text(window.innerWidth)
-#   e.appendTo($('body'))
 
 console.log """
 %c
