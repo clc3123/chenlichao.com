@@ -4,16 +4,11 @@ title: git
 description: git
 ---
 
-Setting up a Git server
-=======================
-
-http://progit.org/book/zh/ch4-4.html
-
 Git Commands
-============
+------------
 
 git checkout -f
-强制取消已作出的变化（尤其是删除文件后适用）
+强制取消已作出的变化
 
 git checkout -b branchname
 新建branch后立即转入新branch
@@ -26,9 +21,6 @@ git mv file dir
 
 git commit -m message
 直接在命令行内输入commit信息
-
-git submodule管理
-http://josephjiang.com/entry.php?id=342
 
 git submodule add git://github.com/tobi/delayed_job.git ./vendor/delayed_job
 添加submodule，必须是在主项目根目录下执行。比如以上就是在主项目根目录下的vendor文件夹中放入delayed_job文件夹。
@@ -44,7 +36,7 @@ git ls-remote remotename branchname
 获取远程分支最新commit的SHA。
 
 Git Setting
-===========
+-----------
 
 $ git config --global core.editor "vim"
 $ git config --global alias.co checkout
@@ -54,7 +46,7 @@ $ git config --global user.name clc3123
 $ git config --global user.email clc3123@gmail.com
 
 Multiple Github Accounts
-========================
+------------------------
 
 假设你有两个Github帐号，用户名分别为first和second。
 
@@ -92,10 +84,10 @@ Multiple Github Accounts
 注意：github根据配置文件的user.email来获取github帐号显示author信息，所以对于多帐号用户一定要记得将user.email改为相应的email(second@mail.com)。
 
 编译安装 gitg 0.2.5
-===================
+-------------------
 
-$ sudo apt-get install libgtk-3-dev libgtksourceview-3.0-dev gsettings-desktop-schemas-dev
-$ tar xjf gitg-0.2.5.tar.bz2
-$ cd gitg-0.2.5
-$ ./configure
-$ sudo make && sudo make install
+    $ sudo apt-get install libgtk-3-dev libgtksourceview-3.0-dev gsettings-desktop-schemas-dev
+    $ tar xjf gitg-0.2.5.tar.bz2
+    $ cd gitg-0.2.5
+    $ ./configure
+    $ sudo make && sudo make install

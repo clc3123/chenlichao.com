@@ -74,9 +74,12 @@ rvm官方推荐了2种方案来“杜绝”bundle exec
 提高Ruby安装速度
 ----------------
 
-FOR MAC
-    $ sed -i .bak 's!ftp.ruby-lang.org/pub/ruby!ruby.taobao.org/mirrors/ruby!' $rvm_path/config/db
-FOR LINUX
+墙内的福音，rvm 1.25之后可用：
+
+    $ sed -i 's!http://cache.ruby-lang.org/pub/ruby!http://ruby.taobao.org/mirrors/ruby!' $rvm_path/config/db
+
+比较老。。。的rvm请用：
+
     $ sed -i 's!ftp.ruby-lang.org/pub/ruby!ruby.taobao.org/mirrors/ruby!' $rvm_path/config/db
 
 常用命令
