@@ -1,5 +1,5 @@
 GEM
-  remote: http://ruby.taobao.org/
+  remote: https://rubygems.org/
   specs:
     blankslate (2.1.2.4)
     chunky_png (1.2.9)
