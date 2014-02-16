@@ -20,8 +20,10 @@ description: 网站的首页，集中列出所有的日志和笔记
     <h2>笔记</h2>
     <ul>
     {% assign dirstrlist = '' %}
+    {% assign sorted_pages = site.pages | sort: 'url' %}
 
-    {% for page in site.pages %}
+
+    {% for page in sorted_pages %}
       {% assign parts = page.url | replace_first: '/' | split: '/' %}
       {% if parts[0] == 'notes' %}
         {% assign dirstr = '' %}
@@ -45,7 +47,7 @@ description: 网站的首页，集中列出所有的日志和笔记
 
               {% assign dirstrlist = dirstrlist | append: '|' | append: dirstr %}
 
-              {% for spage in site.pages %}
+              {% for spage in sorted_pages %}
                 {% assign sparts = spage.url | replace_first: '/' | split: '/' %}
                 {% if sparts[0] == 'notes' %}
                   {% assign sdirstr = '' %}
