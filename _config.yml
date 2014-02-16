@@ -13,6 +13,7 @@ exclude:
   - Guardfile
   - Rakefile
   - favicon.psd
+  - project.aco
 encoding: UTF-8
 assets:
   gzip: false
