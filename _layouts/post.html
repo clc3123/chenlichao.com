@@ -3,10 +3,21 @@ layout: default
 ---
 
 <article class="post">
-  <h2 class="post-title">{{ page.title }}</h2>
-  {% if page.date %}
-  <div class="post-meta">{{ page.date | date: '%F' }}</div>
-  {% endif %}
+  <h1 class="post-title">
+    {% if page.date %}
+      <span class="date">{{ page.date | date: '%F' }}</span>
+    {% else %}
+      {% assign parts = page.url | replace_first: '/' | split: '/' %}
+      {% for part in parts %}
+        {% if forloop.first or forloop.last %}
+          {% continue %}
+        {% else %}
+          <span class="dir">{{ part }}</span>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    {{ page.title }}
+  </h1>
   <div class="post-content">
     {{ content }}
   </div>

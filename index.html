@@ -6,7 +6,7 @@ description: 网站的首页，集中列出所有的日志和笔记
 
 <div class="home">
   <section id="articles">
-    <h2>日志</h2>
+    <h1>日志</h1>
     <ul>
     {% for post in site.posts %}
       <li>
@@ -17,11 +17,10 @@ description: 网站的首页，集中列出所有的日志和笔记
     </ul>
   </section>
   <section id="notes">
-    <h2>笔记</h2>
+    <h1>笔记</h1>
     <ul>
     {% assign dirstrlist = '' %}
     {% assign sorted_pages = site.pages | sort: 'url' %}
-
 
     {% for page in sorted_pages %}
       {% assign parts = page.url | replace_first: '/' | split: '/' %}
