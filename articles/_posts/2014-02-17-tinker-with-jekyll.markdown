@@ -2,7 +2,6 @@
 layout: post
 title: Jekyll，观其所短，知其所长，vs Middleman对比分析
 description: 终于在磕磕绊绊中用Jekyll把自己的博客架好了，干脆将其与Middleman做一个对比评测，作为博客的第一篇文章
-date:   2014-02-03 15:48:29
 ---
 
 将近2周的时间，磕磕绊绊地用Jekyll将自己的博客架好了。:)
@@ -223,3 +222,18 @@ Middleman确实很nb，但是为Jekyll写的插件也不少，自己去Jekyll的
 
 Liquid的价值，可别被忽视了，需要的时候，你也能用得上。
 
+--------------------------------
+
+updated at 2014-02-18:
+
+在Liquid源码中找到了`for` tag的一点[小技巧](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/tags/for.rb#L23-L25)：
+
+You can also define a limit and offset much like SQL. Remember that offset starts at 0 for the first item.
+
+    {% raw %}
+    {% for item in collection limit:5 offset:10 %}
+      {{ item.name }}
+    {% end %}
+    {% endraw %}
+
+能把首页`index.html`中的虐心代码缩短一些了。:)
