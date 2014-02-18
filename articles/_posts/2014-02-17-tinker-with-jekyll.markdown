@@ -8,21 +8,23 @@ description: Jekyll vs Middleman对比评测，兼谈Liquid Template，博客的
 
 这次搭建的技术选型，没有过多的纠结。选用的工具，在ruby语言的几种静态网站生成器中选就好了，Middleman、Nesta、Nanoc，这些都是用过的，这次不想用了，于是选择了Jekyll。
 
-话说Jekyll是ruby圈里开源的最早的一批`Static Site Generator`了，借Github之势，挂起一阵静态网站的复古风潮。但鄙人却一直没有用过。。。惭愧惭愧。。。
+话说Jekyll是ruby圈里开源的最早的一批 `Static Site Generator` 了，借Github之势，挂起一阵静态网站的复古风潮。但鄙人却一直没有用过。。。惭愧惭愧。。。
 
 让我们进入正题，就几个方面将Jekyll和我熟悉的Middleman做一次对比：
 
 ## 模版语言 Liquid vs ERB, Haml
 
-博客搭建完了，我分析了下，这其中最让人虐心的，就是Jekyll的模版语言：`Liquid`。
+博客搭建完了，我分析了下，这其中最让人虐心的，就是Jekyll的模版语言： `Liquid` 。
 
-它可来头不小，出自Shopify公司，当初还没`resque`的时候，Shopify老板写的`delayed_job`那可是连Github都在用。看！Liquid还有不少[大用户](https://github.com/Shopify/liquid/wiki)。
+它可来头不小，出自Shopify公司，当初还没 `resque` 的时候，Shopify老板写的 `delayed_job` 那可是连Github都在用。看！Liquid还有不少[大用户](https://github.com/Shopify/liquid/wiki)。
 
 Liquid因其安全性出众，特别适合需要授权用户自行编写网页模版的场景，比如淘宝模版DIY这种场景（所以Shopify要写这么一个gem，hoho）。
 
-使用Liquid的时候，我们可以像haml和erb一样，在模版渲染的时候，往render方法中传入需要渲染的ruby objects，把它们跟模版一起render出来，只不过，Liquid还要求我们传入的objects具有`to_liquid`方法，用来对objects进行转换，转换后的objects，才能渲染出来。只要我们定制的`to_liquid`方法合理，用户几乎不可能通过我们传入的ruby objects钻任何空子。[链接1](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L181) [链接2](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L216) [链接3](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L223)
+使用Liquid的时候，我们可以像haml和erb一样，在模版渲染的时候，往render方法中传入需要渲染的ruby objects，把它们跟模版一起render出来，只不过，Liquid还要求我们传入的objects具有 `to_liquid` 方法，用来对objects进行转换，转换后的objects，才能渲染出来。只要我们定制的 `to_liquid` 方法合理，用户几乎不可能通过我们传入的ruby objects钻任何空子。[链接1](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L181) [链接2](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L216) [链接3](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L223)
 
-Liquid中除了让programmer定义`to_liquid`外，还为ruby的各种内置数据类型默认扩展了`to_liquid`的方法，包括Array，String，Hash等。[链接](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/extensions.rb)
+Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置数据类型默认扩展了 `to_liquid` 的方法，包括Array，String，Hash等。
+
+[链接](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/extensions.rb)
 
     class String # :nodoc:
       def to_liquid
@@ -42,9 +44,11 @@ Liquid中除了让programmer定义`to_liquid`外，还为ruby的各种内置数�
       end
     end
 
-咋一看，Liquid也没对这些数据类型做特殊的转换，那么是不是我们可以随便在Jekyll的Liquid模版中插入`{% raw %}{{ page.content.to_sym }}{% endraw %}`呢？
+咋一看，Liquid也没对这些数据类型做特殊的转换，那么是不是我们可以随便在Jekyll的Liquid模版中插入 `{% raw %}{{ page.content.to_sym }}{% endraw %}` 呢？
 
-呵呵...Github能随便让你在他家的Github Page中制造内存爆炸吗？别高兴得太早，看这里：[链接](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L193-L237)
+呵呵...Github能随便让你在他家的Github Page中制造内存爆炸吗？别高兴得太早，看这里：
+
+[链接](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L193-L237)
 
     if object.respond_to?(:[]) and
       ((object.respond_to?(:has_key?) and object.has_key?(part)) or
@@ -67,9 +71,9 @@ Liquid中除了让programmer定义`to_liquid`外，还为ruby的各种内置数�
       return nil
     end
 
-哭了，这么严格的规定...想在String上做个`String#reverse`都不行...
+哭了，这么严格的规定...想在String上做个 `String#reverse` 都不行...
 
-上面给出的`Liquid::Context#variable`方法也是Liquid中一个很重要的method，实际上除了那些恐怖的[正则匹配](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid.rb#L23-L45)外，就是它来审查用户模版中对我们传入的ruby objects的调用了，可谓执掌生杀大权，随便有点非份之想，就是`return nil` ...
+上面给出的 `Liquid::Context#variable` 方法也是Liquid中一个很重要的method，实际上除了那些恐怖的[正则匹配](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid.rb#L23-L45)外，就是它来审查用户模版中对我们传入的ruby objects的调用了，可谓执掌生杀大权，随便有点非份之想，就是 `return nil` ...
 
 举个例子，Jekyll中，我们经常用到这个：
 
@@ -79,7 +83,7 @@ Liquid中除了让programmer定义`to_liquid`外，还为ruby的各种内置数�
     {% endfor %}
     {% endraw %}
 
-参考`Jekyll::Site`中的这些代码 [链接1](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L158) [链接2](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L310) [链接3](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L237-L239) [链接4](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/page.rb#L113-L115) [链接5](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/convertible.rb#L143)，可知当Liquid解析完`site.pages`的时候，它还是一个由`Jekyll::Page` instances组成的array，可是当进入for循环的时候，`page`就只是一个经过`to_liquid`转换的普通Hash咯，看[这里](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/convertible.rb#L100)
+参考 `Jekyll::Site` 中的这些代码 [链接1](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L158) [链接2](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L310) [链接3](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L237-L239) [链接4](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/page.rb#L113-L115) [链接5](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/convertible.rb#L143)，可知当Liquid解析完 `site.pages` 的时候，它还是一个由 `Jekyll::Page` instances组成的array，可是当进入for循环的时候， `page` 就只是一个经过 `to_liquid` 转换的普通Hash咯，看[这里](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/convertible.rb#L100)
 
     ATTRIBUTES_FOR_LIQUID = %w[
       url
@@ -99,17 +103,17 @@ Liquid中除了让programmer定义`to_liquid`外，还为ruby的各种内置数�
 
 在Middleman中使用template的话，上面提到的都不是问题，因为template是由Haml或者ERB驱动的，运行ruby代码不在话下。
 
-咳咳...ERB模版中执行`<%- exec("rm -rf /") %>`也是可以的，如果你有足够权限的话...
+咳咳...ERB模版中执行 `<%- exec("rm -rf /") %>` 也是可以的，如果你有足够权限的话...
 
 而在Jekyll中，不考虑对其进行扩展的情况下（想想Github Page环境）：
 
-第1点，你只能通过`Liquid::StandardFilters`和`Jekyll::Filter`提供的filter来操纵字符串，也就是说，Github Page也只能提供这些了。你的选择很少，很纠结...
+第1点，你只能通过 `Liquid::StandardFilters` 和 `Jekyll::Filter` 提供的filter来操纵字符串，也就是说，Github Page也只能提供这些了。你的选择很少，很纠结...
 
-第2点，你不能初始化一个Array或者Hash来存放临时数据。除了模版render时传入的ruby object可以是一个hash，并可以包含array外，超哥我唯一发现的可以生成array的就是`Liquid::StandardFilters#split`。
+第2点，你不能初始化一个Array或者Hash来存放临时数据。除了模版render时传入的ruby object可以是一个hash，并可以包含array外，超哥我唯一发现的可以生成array的就是 `Liquid::StandardFilters#split` 。
 
-为了将一些临时数据存储为array，我不得不采用一种很hacky的办法：首先assign一个string临时变量`fake_array`，再将需要存储的数据转为string，`Liquid::StandardFilters#append`到`fake_array`中，需要用时再将`fake_array`进行split。
+为了将一些临时数据存储为array，我不得不采用一种很hacky的办法：首先assign一个string临时变量 `fake_array` ，再将需要存储的数据转为string， `Liquid::StandardFilters#append` 到 `fake_array` 中，需要用时再将 `fake_array` 进行split。
 
-因此在博客的首页`index.html`中出现了这样的蛋疼代码（没耐心的就别看了...），虐心程度堪比`Flappy Bird`：
+因此在博客的首页 `index.html` 中出现了这样的蛋疼代码（没耐心的就别看了...），虐心程度堪比 `Flappy Bird` ：
 
     {% raw %}
     <section id="notes">
@@ -180,11 +184,11 @@ Middleman使用Haml，可以少写很多的html代码，也不用忍受Liquid那
 Middleman在这方面大幅领先，让我们来看看：
 
 1.  Rails的Asset Pipeline，用过的没有一个不赞的，Middleman集成得很好
-2.  集成了貌似一堆`Padrino`的helpers（囧），基本想得到的helper都有了
-3.  rack-livereload，杠杠嘀！livereload服务器端不用自己设置，执行`$ middleman server`的时候就自动架好了；只需chrome浏览器中安装一个插件即可。
+2.  集成了貌似一堆 `Padrino` 的helpers（囧），基本想得到的helper都有了
+3.  rack-livereload，杠杠嘀！livereload服务器端不用自己设置，执行 `$ middleman server` 的时候就自动架好了；只需chrome浏览器中安装一个插件即可。
 4.  i18n...装B的玩意...
 
-Middleman确实很nb，但是为Jekyll写的插件也不少，自己去Jekyll的官网去找。谁说屌丝不能有法拉利？Nick Quaranto的博文介绍一个凑合的Asset Pipeline[链接](http://quaran.to/blog/2013/01/09/use-jekyll-scss-coffeescript-without-plugins/)：
+Middleman确实很nb，但是为Jekyll写的插件也不少，自己去Jekyll的官网去找。谁说屌丝不能有法拉利？Nick Quaranto的博文介绍一个凑合的Asset Pipeline [链接](http://quaran.to/blog/2013/01/09/use-jekyll-scss-coffeescript-without-plugins/)：
 
     desc "compile and run the site"
     task :default do
@@ -226,7 +230,7 @@ Liquid的价值，可别被忽视了，需要的时候，你也能用得上。
 
 updated at 2014-02-18:
 
-在Liquid源码中找到了`for` tag的一点[小技巧](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/tags/for.rb#L23-L25)：
+在Liquid源码中找到了 `for` tag的一点[小技巧](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/tags/for.rb#L23-L25)：
 
 You can also define a limit and offset much like SQL. Remember that offset starts at 0 for the first item.
 
@@ -236,4 +240,4 @@ You can also define a limit and offset much like SQL. Remember that offset start
     {% end %}
     {% endraw %}
 
-能把首页`index.html`中的虐心代码缩短一些了。:)
+能把首页 `index.html` 中的虐心代码缩短一些了。:)
