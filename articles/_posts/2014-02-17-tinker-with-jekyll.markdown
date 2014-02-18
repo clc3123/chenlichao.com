@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Jekyll，观其所短，知其所长，vs Middleman对比分析
-description: 终于在磕磕绊绊中用Jekyll把自己的博客架好了，干脆将其与Middleman做一个对比评测，作为博客的第一篇文章
+title: Tinker with Jekyll，观其所短，知其所长
+description: Jekyll vs Middleman对比评测，兼谈Liquid Template，博客的第一篇文章哦
 ---
 
 将近2周的时间，磕磕绊绊地用Jekyll将自己的博客架好了。:)
@@ -12,7 +12,7 @@ description: 终于在磕磕绊绊中用Jekyll把自己的博客架好了，干�
 
 让我们进入正题，就几个方面将Jekyll和我熟悉的Middleman做一次对比：
 
-## 模版语言 Template Language
+## 模版语言 Liquid vs ERB, Haml
 
 博客搭建完了，我分析了下，这其中最让人虐心的，就是Jekyll的模版语言：`Liquid`。
 

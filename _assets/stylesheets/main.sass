@@ -119,8 +119,26 @@ a
       color: $color-white
 .post-content
   line-height: 2
-  > p, > div
+  > p, > div, > ul, > ol, > hr, > h2, > h3
     margin: 2em 0
+  h2, h3
+    padding-left: 1em
+    border-left: 4px solid $color-background-highlight
+    color: $color-white
+    font-size: 1.25em
+  h2
+    &:before, &:after
+      color: $color-white
+      content: '\20+\20'
+  h3
+    &:before, &:after
+      color: $color-white
+      content: '\20+\20+\20'
+  hr
+    border: none
+    // border-bottom: 4px solid white 
+    border-top: 4px dashed $color-border
+
 .highlight
   background: $color-background-highlight
   @include border-radius(5px)
