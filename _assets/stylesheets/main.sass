@@ -139,8 +139,9 @@ a
       content: '\20+\20+\20'
   hr
     border: none
-    // border-bottom: 4px solid white 
-    border-top: 4px dashed $color-border
+    background: $color-background-highlight
+    height: 4px
+    @include box-shadow(inset 0 1px 1px rgba(black, 0.2), 0 1px 0 rgba(white, 0.2))
 
 .highlight
   background: $color-background-highlight
