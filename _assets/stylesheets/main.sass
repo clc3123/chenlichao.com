@@ -204,10 +204,11 @@ code
     font-size: 5em
 
 @media only screen and (max-width: 640px)
-  // code
-  //   white-space: pre-wrap
-  //   pre &
-  //     white-space: pre-wrap
+  code
+    word-break: break-all
+    word-break: break-word
+    pre &
+      word-break: normal
   .home
     section
       h1
