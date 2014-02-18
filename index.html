@@ -19,50 +19,46 @@ description: 网站的首页，集中列出所有的日志和笔记
   <section id="notes">
     <h1>笔记</h1>
     <ul>
-    {% assign dirstrlist = '' %}
+    {% assign page_dir_collection = '' %}
     {% assign sorted_pages = site.pages | sort: 'url' %}
 
     {% for page in sorted_pages %}
       {% assign parts = page.url | replace_first: '/' | split: '/' %}
       {% if parts[0] == 'notes' %}
-        {% assign dirstr = '' %}
+        {% assign note_dir = '' %}
         {% for part in parts %}
-          {% unless forloop.last %}
-            {% assign dirstr = dirstr | append: '/' | append: parts[forloop.index0] %}
-          {% endunless%}
-
           {% if forloop.last %}
-            {% assign dirarray = dirstrlist | replace_first: '|' | split: '|' %}
-            {% if dirarray contains dirstr %}
+            {% assign page_dir_array = page_dir_collection | replace_first: '|' | split: '|' %}
+            {% if page_dir_array contains note_dir %}
               {% continue %}
             {% else %}
               <li>
-              {% assign units = dirstr | replace_first: '/' | split: '/' %}
-              {% for unit in units %}
-                {% unless forloop.first %}
-                  <span class="dir">{{ unit }}</span>
-                {% endunless %}
+              {% assign page_dir_collection = page_dir_collection | append: '|' | append: note_dir %}
+
+              {% assign parts = note_dir | replace_first: '/' | split: '/' %}
+              {% for part in parts offset: 1 %}
+                <span class="dir">{{ part }}</span>
               {% endfor %}
 
-              {% assign dirstrlist = dirstrlist | append: '|' | append: dirstr %}
-
-              {% for spage in sorted_pages %}
-                {% assign sparts = spage.url | replace_first: '/' | split: '/' %}
-                {% if sparts[0] == 'notes' %}
-                  {% assign sdirstr = '' %}
-                  {% for spart in sparts %}
-                    {% unless forloop.last %}
-                      {% assign sdirstr = sdirstr | append: '/' | append: sparts[forloop.index0] %}
-                    {% endunless%}
-
-                    {% if forloop.last and sdirstr == dirstr %}
-                      <a href="{{ spage.url }}">{{ spart | replace: '.html' }}</a>
+              {% for page in sorted_pages %}
+                {% assign parts = page.url | replace_first: '/' | split: '/' %}
+                {% if parts[0] == 'notes' %}
+                  {% assign matching_note_dir = '' %}
+                  {% for part in parts %}
+                    {% if forloop.last %}
+                      {% if matching_note_dir == note_dir %}
+                        <a href="{{ page.url }}">{{ part | replace: '.html' }}</a>
+                      {% endif %}
+                    {% else %}
+                      {% assign matching_note_dir = matching_note_dir | append: '/' | append: part %}
                     {% endif %}
                   {% endfor %}
                 {% endif %}
               {% endfor %}
               </li>
             {% endif %}
+          {% else %}
+            {% assign note_dir = note_dir | append: '/' | append: part %}
           {% endif %}
         {% endfor %}
       {% endif %}
