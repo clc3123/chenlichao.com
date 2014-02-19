@@ -11,7 +11,7 @@ description: 网站的首页，集中列出所有的日志和笔记
     {% for post in site.posts %}
       <li>
         <span class="date">{{ post.date | date: '%F' }}</span>
-        <a href="{{ post.url }}">{{ post.title }}</a>
+        <a href="{{ post.url }}" title="{{ post.description }}">{{ post.title }}</a>
       </li>
     {% endfor %}
     </ul>
