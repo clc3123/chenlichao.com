@@ -47,7 +47,7 @@ description: 网站的首页，集中列出所有的日志和笔记
                   {% for part in parts %}
                     {% if forloop.last %}
                       {% if matching_note_dir == note_dir %}
-                        <a href="{{ page.url }}">{{ part | replace: '.html' }}</a>
+                        <a href="{{ page.url }}" title="{{ page.title }}">{{ part | replace: '.html' }}</a>
                       {% endif %}
                     {% else %}
                       {% assign matching_note_dir = matching_note_dir | append: '/' | append: part %}
