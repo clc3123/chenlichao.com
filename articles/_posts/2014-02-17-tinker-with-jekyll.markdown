@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Tinker with Jekyll，观其所短，知其所长
+title: Tinker with Jekyll，兼谈Liquid Template
 description: Jekyll vs Middleman对比评测，兼谈Liquid Template，博客的第一篇文章哦
 ---
 
@@ -10,7 +10,7 @@ description: Jekyll vs Middleman对比评测，兼谈Liquid Template，博客的
 
 话说Jekyll是ruby圈里开源的最早的一批 `Static Site Generator` 了，借Github之势，挂起一阵静态网站的复古风潮。但鄙人却一直没有用过。。。惭愧惭愧。。。
 
-让我们进入正题，就几个方面将Jekyll和我熟悉的Middleman做一次对比：
+让我们进入正题，就模版、开发环境、部署三个方面将Jekyll和我熟悉的Middleman做一次对比：
 
 ## 模版语言 Liquid vs ERB, Haml
 
@@ -95,11 +95,11 @@ Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置�
 
 可见，当Jekyll采用Liquid作为template的时候，我们能够发挥的空间就很小了。
 
-我们处理页面逻辑的时候，通常会有几个常见的需求：
+比如说，在我们处理页面逻辑的时候，通常会有几个常见的需求：
 
 1.  字符操作
-2.  Hash、Array或其它具有灵活性的datatype作为临时变量
-3.  读取文件系统
+2.  读取文件系统
+3.  Hash、Array或其它具有灵活性的datatype作为临时变量
 
 在Middleman中使用template的话，上面提到的都不是问题，因为template是由Haml或者ERB驱动的，运行ruby代码不在话下。
 
@@ -109,11 +109,21 @@ Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置�
 
 第1点，你只能通过 `Liquid::StandardFilters` 和 `Jekyll::Filter` 提供的filter来操纵字符串，也就是说，Github Page也只能提供这些了。你的选择很少，很纠结...
 
-第2点，你不能初始化一个Array或者Hash来存放临时数据。除了模版render时传入的ruby object可以是一个hash，并可以包含array外，超哥我唯一发现的可以生成array的就是 `Liquid::StandardFilters#split` 。
+第2点，也是不可能的...除非你有极好的眼力和耐心来洞察Liquid代码中的漏洞，哈哈！
 
-为了将一些临时数据存储为array，我不得不采用一种很hacky的办法：首先assign一个string临时变量 `fake_array` ，再将需要存储的数据转为string， `Liquid::StandardFilters#append` 到 `fake_array` 中，需要用时再将 `fake_array` 进行split。
+第3点，你不能初始化一个array或者hash来存放临时数据。超哥我唯一发现的可以生成array的就是 `Liquid::StandardFilters#split` ，可是Liquid中的array缺少了“掐头去尾”的功能，可操作性很小。
 
-因此在博客的首页 `index.html` 中出现了这样的蛋疼代码（没耐心的就别看了...），虐心程度堪比 `Flappy Bird` ：
+为了将一些临时数据存储为array，我不得不采用一种很hacky的办法：首先assign一个string临时变量 `fake_array` ，再将需要存储的数据转为string， `Liquid::StandardFilters#append` 到 `fake_array` 中，需要用时再将 `fake_array` 进行split来获取array。
+
+![note-tree](/images/tinker-with-jekyll/note-tree.jpg)
+
+在网站首页中，我就用到了上面提到的这个方法。为了将所有的notes（如上图）生成一个按目录分类的索引：
+
+![note-index](/images/tinker-with-jekyll/note-index.jpg)
+
+我竟然写了这么长的一段蛋疼的代码，虐心程度堪比 `Flappy Bird` ：
+
+超哥注：改进后的相应代码见页尾，利用了几个Liquid中发现的特性
 
     {% raw %}
     <section id="notes">
@@ -171,15 +181,13 @@ Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置�
     </section>
     {% endraw %}
 
-刷了一屏没啥营养的代码，罪过罪过...第3点，也不用说了吧...做不到的！
-
 这么看来，Jekyll作为Github Page的基础，的确是很切合产品所需的：安全第一！因为Github并不能信任每一个它的用户。
 
 Middleman使用Haml，可以少写很多的html代码，也不用忍受Liquid那恶心的括号和tag，这点上就很让我喜欢了。
 
 足够的自由，自由就意味着高效（某种程度上）。
 
-## 配套设施
+## 开发环境 Development Environment
 
 Middleman在这方面大幅领先，让我们来看看：
 
@@ -208,7 +216,7 @@ Middleman确实很nb，但是为Jekyll写的插件也不少，自己去Jekyll的
       end
     end
 
-## 托管服务
+## Deploy 托管服务
 
 有Github在，这个已经不是问题。如果你的Jekyll博客不使用插件的话，一个push就能搞定部署，连compile都不要。Middleman需要先compile，但又能麻烦到哪去呢，HOHO。
 
@@ -241,3 +249,65 @@ You can also define a limit and offset much like SQL. Remember that offset start
     {% endraw %}
 
 能把首页 `index.html` 中的虐心代码缩短一些了。:)
+
+-----------------------------------
+
+updated at 2014-02-19:
+
+首页 `index.html` 中的代码升级，主要是变量命名上的变化，如下：
+
+    {% raw %}
+    <section id="notes">
+      <h1>笔记</h1>
+      <ul>
+      {% assign page_dir_collection = '' %}
+      {% assign sorted_pages = site.pages | sort: 'url' %}
+
+      {% for page in sorted_pages %}
+        {% assign parts = page.url | replace_first: '/' | split: '/' %}
+        {% if parts[0] == 'notes' %}
+          {% assign note_dir = '' %}
+          {% for part in parts %}
+            {% if forloop.last %}
+              {% assign page_dir_array = page_dir_collection | replace_first: '|' | split: '|' %}
+              {% if page_dir_array contains note_dir %}
+                {% continue %}
+              {% else %}
+                <li>
+                {% assign page_dir_collection = page_dir_collection | append: '|' | append: note_dir %}
+
+                {% assign parts = note_dir | replace_first: '/' | split: '/' %}
+                {% for part in parts offset: 1 %}
+                  <span class="dir">{{ part }}</span>
+                {% endfor %}
+
+                {% for page in sorted_pages %}
+                  {% assign parts = page.url | replace_first: '/' | split: '/' %}
+                  {% if parts[0] == 'notes' %}
+                    {% assign matching_note_dir = '' %}
+                    {% for part in parts %}
+                      {% if forloop.last %}
+                        {% if matching_note_dir == note_dir %}
+                          <a href="{{ page.url }}">{{ part | replace: '.html' }}</a>
+                        {% endif %}
+                      {% else %}
+                        {% assign matching_note_dir = matching_note_dir | append: '/' | append: part %}
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+                </li>
+              {% endif %}
+            {% else %}
+              {% assign note_dir = note_dir | append: '/' | append: part %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+      </ul>
+    </section>
+    {% endraw %}
+
+在Liquid中，例如 `for` `if` `case` 这样的block tag都会利用 `Liquid::Context#stack` 来新建一个 `local scope` （[代码](https://github.com/Shopify/liquid/blob/712d97e37d4da88ab1951425cce8d694008d6451/lib/liquid/context.rb#L103-L108)），因此part或者page这样的循环变量完全不用担心和 `outer scope` 的同名变量冲突。原先代码中的 `spart` 和 `spage` 这样怪异的变量命名都变得多余。
+
+但是要小心 `assign` tag的使用（[代码](https://github.com/Shopify/liquid/blob/712d97e37d4da88ab1951425cce8d694008d6451/lib/liquid/tags/assign.rb#L26)），它可是对最外层scope中的同名变量做赋值。Liquid的Github Repo中有一个增加local scope变量赋值的[feature request](https://github.com/Shopify/liquid/issues/129)，我个人还是蛮支持的。
