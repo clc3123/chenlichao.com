@@ -1,28 +1,33 @@
 ---
 layout: post
 title: Tinker with Jekyll，兼谈Liquid Template
-description: Jekyll vs Middleman对比评测，兼谈Liquid Template，博客的第一篇文章哦
+description: Jekyll vs Middleman，兼谈Liquid Template，博客的第一篇文章哦
 ---
 
-将近2周的时间，磕磕绊绊地用Jekyll将自己的博客架好了。:)
+用了将近2周的时间，磕磕绊绊，总算用Jekyll将自己的博客架好了。。。
 
-这次搭建的技术选型，没有过多的纠结。选用的工具，在ruby语言的几种静态网站生成器中选就好了，Middleman、Nesta、Nanoc，这些都是用过的，这次不想用了，于是选择了Jekyll。
+回忆当初技术选型的时候，Ruby语言的静态网站生成器中，Middleman、Nesta、Nanoc，因为已经用过，心想折腾个没用过的吧，于是选择了Jekyll。
 
-话说Jekyll是ruby圈里开源的最早的一批 `Static Site Generator` 了，借Github之势，挂起一阵静态网站的复古风潮。但鄙人却一直没有用过。。。惭愧惭愧。。。
+呵呵...虽说Jekyll是开源的最早的也是最火的 `Static Site Generator` ，但鄙人却一直没有用过。。。惭愧惭愧。。。
 
-让我们进入正题，就模版、开发环境、部署三个方面将Jekyll和我熟悉的Middleman做一次对比：
+注：本文讨论的gem版本为：
+
+*   [Jekyll](http://jekyllrb.com) 1.4.3
+*   [Liquid](https://github.com/Shopify/liquid) 2.5.5
+
+接下来，我将就模版、开发环境两个方面将Jekyll和我熟悉的Middleman做一次对比：
 
 ## 模版语言 Liquid vs ERB, Haml
 
 博客搭建完了，我分析了下，这其中最让人虐心的，就是Jekyll的模版语言： `Liquid` 。
 
-它可来头不小，出自Shopify公司，当初还没 `resque` 的时候，Shopify老板写的 `delayed_job` 那可是连Github都在用。看！Liquid还有不少[大用户](https://github.com/Shopify/liquid/wiki)。
+它可来头不小，出自Shopify公司，当初还没 `resque` 的时候，Shopify老板写的 `delayed_job` 那可是连Github都在用。Liquid还有不少[大用户](https://github.com/Shopify/liquid/wiki)。
 
-Liquid因其安全性出众，特别适合需要授权用户自行编写网页模版的场景，比如淘宝模版DIY这种场景（所以Shopify要写这么一个gem，hoho）。
+Liquid模版因其安全性出众，特别适合需要授权用户自行编写网页模版的场景，比如淘宝模版DIY这种场景（所以Shopify要写这么一个gem，hoho）。
 
-使用Liquid的时候，我们可以像haml和erb一样，在模版渲染的时候，往render方法中传入需要渲染的ruby objects，把它们跟模版一起render出来，只不过，Liquid还要求我们传入的objects具有 `to_liquid` 方法，用来对objects进行转换，转换后的objects，才能渲染出来。只要我们定制的 `to_liquid` 方法合理，用户几乎不可能通过我们传入的ruby objects钻任何空子。[链接1](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L181) [链接2](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L216) [链接3](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L223)
+使用Liquid的时候，我们可以像haml和erb一样，在模版渲染的时候，往render方法中传入需要渲染的ruby objects，把它们跟模版一起render出来，只不过，Liquid还要求我们传入的objects具有 `to_liquid` 方法，每个objects必须用其进行转换才能渲染出来。只要我们定制的 `to_liquid` 方法合理，用户几乎不可能通过我们传入的ruby objects钻任何空子。 [链接1](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L181) [链接2](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L216) [链接3](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L223)
 
-Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置数据类型默认扩展了 `to_liquid` 的方法，包括Array，String，Hash等。
+Liquid默认为ruby的各种内置数据类型扩展了 `to_liquid` 的方法，包括Array，String，Hash等。
 
 [链接](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/extensions.rb)
 
@@ -46,7 +51,7 @@ Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置�
 
 咋一看，Liquid也没对这些数据类型做特殊的转换，那么是不是我们可以随便在Jekyll的Liquid模版中插入 `{% raw %}{{ page.content.to_sym }}{% endraw %}` 呢？
 
-呵呵...Github能随便让你在他家的Github Page中制造内存爆炸吗？别高兴得太早，看这里：
+呵呵...Github能随便让你在他家的Github Page中制造内存爆炸吗？别高兴得太早，参考 `Liquid::Context#variable` 的代码：
 
 [链接](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/context.rb#L193-L237)
 
@@ -71,7 +76,7 @@ Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置�
       return nil
     end
 
-哭了，这么严格的规定...想在String上做个 `String#reverse` 都不行...
+哭了，这么严格的规定...想在string上整个 `String#reverse` 都不行...
 
 上面给出的 `Liquid::Context#variable` 方法也是Liquid中一个很重要的method，实际上除了那些恐怖的[正则匹配](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid.rb#L23-L45)外，就是它来审查用户模版中对我们传入的ruby objects的调用了，可谓执掌生杀大权，随便有点非份之想，就是 `return nil` ...
 
@@ -83,7 +88,7 @@ Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置�
     {% endfor %}
     {% endraw %}
 
-参考 `Jekyll::Site` 中的这些代码 [链接1](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L158) [链接2](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L310) [链接3](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L237-L239) [链接4](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/page.rb#L113-L115) [链接5](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/convertible.rb#L143)，可知当Liquid解析完 `site.pages` 的时候，它还是一个由 `Jekyll::Page` instances组成的array，可是当进入for循环的时候， `page` 就只是一个经过 `to_liquid` 转换的普通Hash咯，看[这里](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/convertible.rb#L100)
+参考 `Jekyll::Site` 中的这些代码 [链接1](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L158) [链接2](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L310) [链接3](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/site.rb#L237-L239) [链接4](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/page.rb#L113-L115) [链接5](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/convertible.rb#L143)，可知当Liquid解析完 `site.pages` 的时候，它还是一个由 `Jekyll::Page` instances组成的array，可是当进入for循环的时候， `page` 就只是一个经过 `Liquid::Convertible#to_liquid` 转换的普通Hash咯，见[这里](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/convertible.rb#L100)
 
     ATTRIBUTES_FOR_LIQUID = %w[
       url
@@ -93,7 +98,7 @@ Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置�
 
 而page中的可访问的属性就只剩下[上面这些](https://github.com/jekyll/jekyll/blob/0e20ced15185fe32d65daf39a6ad5056f9ab9b59/lib/jekyll/page.rb#L11-L15)，以及page中YAML Front Matter中设置的那些属性了...
 
-可见，当Jekyll采用Liquid作为template的时候，我们能够发挥的空间就很小了。
+可见，因为Jekyll采用的是Liquid作为template，我们能够发挥的空间就很小了。
 
 比如说，在我们处理页面逻辑的时候，通常会有几个常见的需求：
 
@@ -101,17 +106,15 @@ Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置�
 2.  读取文件系统
 3.  Hash、Array或其它具有灵活性的datatype作为临时变量
 
-在Middleman中使用template的话，上面提到的都不是问题，因为template是由Haml或者ERB驱动的，运行ruby代码不在话下。
+在Middleman中使用template的话，上面提到的都不是问题，因为template是由Haml或者ERB驱动的，运行ruby代码不在话下。咳咳...ERB模版中执行 `<%- exec("rm -rf /") %>` 也是可以的，如果你有足够权限的话...
 
-咳咳...ERB模版中执行 `<%- exec("rm -rf /") %>` 也是可以的，如果你有足够权限的话...
+而在不考虑对Jekyll进行扩展的情况下（比如Github Page这样的环境）：
 
-而在Jekyll中，不考虑对其进行扩展的情况下（想想Github Page环境）：
-
-第1点，你只能通过 `Liquid::StandardFilters` 和 `Jekyll::Filter` 提供的filter来操纵字符串，也就是说，Github Page也只能提供这些了。你的选择很少，很纠结...
+第1点，你只能通过 `Liquid::StandardFilters` 和 `Jekyll::Filter` 提供的filter来操纵字符串，查看代码后会发现，可供操作字符串的filter少的可怜，很多常见的方法都见不到，很纠结...
 
 第2点，也是不可能的...除非你有极好的眼力和耐心来洞察Liquid代码中的漏洞，哈哈！
 
-第3点，你不能初始化一个array或者hash来存放临时数据。超哥我唯一发现的可以生成array的就是 `Liquid::StandardFilters#split` ，可是Liquid中的array缺少了“掐头去尾”的功能，可操作性很小。
+第3点，你不能初始化一个array或者hash来存放临时数据。超哥我唯一发现的可以生成array的就是 `Liquid::StandardFilters#split` ，可是Liquid中的array缺少了例如“掐头去尾”的filter，可操作性很小。
 
 为了将一些临时数据存储为array，我不得不采用一种很hacky的办法：首先assign一个string临时变量 `fake_array` ，再将需要存储的数据转为string， `Liquid::StandardFilters#append` 到 `fake_array` 中，需要用时再将 `fake_array` 进行split来获取array。
 
@@ -181,11 +184,9 @@ Liquid中除了让programmer定义 `to_liquid` 外，还为ruby的各种内置�
     </section>
     {% endraw %}
 
-这么看来，Jekyll作为Github Page的基础，的确是很切合产品所需的：安全第一！因为Github并不能信任每一个它的用户。
+这么看来，Jekyll作为Github Page的基础，的确是很切合产品所需的：安全第一！想靠着黑Github出名的用户也是有的哦，呵呵。
 
-Middleman使用Haml，可以少写很多的html代码，也不用忍受Liquid那恶心的括号和tag，这点上就很让我喜欢了。
-
-足够的自由，自由就意味着高效（某种程度上）。
+再看Middleman，因为使用[Haml](http://haml.info/)，可以少写很多的html代码，也不用忍受Liquid那恶心的括号和tag；因为结合了Asset Pipeline，Haml2Html也无需额外动手。所以说一旦上手，是件很爽的事。
 
 ## 开发环境 Development Environment
 
@@ -196,7 +197,11 @@ Middleman在这方面大幅领先，让我们来看看：
 3.  rack-livereload，杠杠嘀！livereload服务器端不用自己设置，执行 `$ middleman server` 的时候就自动架好了；只需chrome浏览器中安装一个插件即可。
 4.  i18n...装B的玩意...
 
-Middleman确实很nb，但是为Jekyll写的插件也不少，自己去Jekyll的官网去找。谁说屌丝不能有法拉利？Nick Quaranto的博文介绍一个凑合的Asset Pipeline [链接](http://quaran.to/blog/2013/01/09/use-jekyll-scss-coffeescript-without-plugins/)：
+再看Jekyll，虽然因为自身简约的哲学，没有搞Middleman那种一站式方案，但因为社区很火很强大，所以为它写的插件也不少，大家可以自己去Jekyll的官网去找。这次我就用到了[jekyll-assets](https://github.com/ixti/jekyll-assets)这个gem，可以说是完美复制Asset Pipeline。
+
+谁说屌丝不能有法拉利？Nick Quaranto的博文介绍一个Jekyll用的简化版Asset Pipeline方案：
+
+[链接](http://quaran.to/blog/2013/01/09/use-jekyll-scss-coffeescript-without-plugins/)
 
     desc "compile and run the site"
     task :default do
@@ -216,23 +221,21 @@ Middleman确实很nb，但是为Jekyll写的插件也不少，自己去Jekyll的
       end
     end
 
-## Deploy 托管服务
-
-有Github在，这个已经不是问题。如果你的Jekyll博客不使用插件的话，一个push就能搞定部署，连compile都不要。Middleman需要先compile，但又能麻烦到哪去呢，HOHO。
-
 -------------------------------
 
-总结时间到了。
+对比完两个方面，还是总结一下吧：
 
-说Jekyll是建立在Ruby的基础上，我看倒不如说是建立在Liquid上更为贴切。
+虽说Jekyll是Ruby写的，可我看倒不如说是建立在Liquid上更为贴切。有了Liquid的安全性，才能有Jekyll，才能有Github Page。
 
 在简单的需求下，比如为Github项目建立介绍页面，Jekyll绝对是首选，你的粉丝甚至可以在Github上为你的页面fix typo，获得小小的满足，hoho。
 
-如果你想搞一个静态博客托管服务，支持在线编辑预览，Jekyll是个很好的选择。虽然也许别人希望你能支持Middleman...哭...
+还有，如果要搞一个静态博客托管服务，支持在线编辑预览，Jekyll是个很好的选择。
 
-但如果你仅是想写个静态博客，并在本地或自己的服务器执行编译，用Middleman是更好的选择。对了，<http://teahour.fm>也是Middleman打底的哦！
+但如果你想写个稍微复杂些的静态博客，需要更强大更丰富的模板语言，能在本地或自己的服务器执行编译，One-stop的Middleman想必用着更爽些。
 
-Liquid的价值，可别被忽视了，需要的时候，你也能用得上。
+对了，<http://teahour.fm>也是Middleman打底的哦！
+
+别忘了Liquid，好东西！
 
 --------------------------------
 
