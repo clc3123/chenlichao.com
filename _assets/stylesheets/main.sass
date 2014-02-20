@@ -10,7 +10,16 @@ $color_background_dark: #312743
 $color_background_light: #f5deb3
 $color_background_highlight: #5d4165
 $color_border: #5d4165
-$color_wheat: #f5deb3
+
+::selection
+  color: white
+  background: rgba($color_text_strong, 0.99)
+  @include text-shadow(none)
+
+::-moz-selection
+  color: white
+  background: rgba($color_text_strong, 0.99)
+  @include text-shadow(none)
 
 h1, h2, h3, h4, h5, h6
   font-size: 1em
@@ -35,6 +44,12 @@ a
     display: table
   &:after
     clear: both
+
+%select-none
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none 
+  user-select: none
 
 html, body
   width: 100%
@@ -198,6 +213,7 @@ body
       width: 1.5em
       color: $color_white
       text-align: center
+      @extend %select-none
 
 pre
   padding: 1em
