@@ -87,6 +87,7 @@ body
 #footer
   border-top: 4px dashed $color_border
   background: $color_background_light
+  @include box-shadow(0 1px 10px rgba(black, 0.4), 0 -1px 0 rgba(white, 0.2))
 #footer-inside
   @extend %clearfix
   font-size: 0.875em
@@ -104,15 +105,15 @@ body
 
 .home
   section
-    overflow: hidden
     color: $color_white
     h1
-      float: left
       margin: 2em 0 0
+      padding-left: 1em
+      border-left: 4px solid $color_background_highlight
     ul
       list-style: none
       padding: 0
-      margin: 0 0 0 5em
+      margin: 0
     li
       margin: 2em 0
     .date, .dir
@@ -227,10 +228,3 @@ code
   //   word-break: break-word
   //   pre &
   //     word-break: normal
-  .home
-    section
-      h1
-        float: none
-      ul
-        width: 100%
-        margin: 0
