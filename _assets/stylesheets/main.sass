@@ -165,9 +165,13 @@ body
 .post-content
   font-size: 0.875em
   line-height: 2
-  > p, > div, > ul, > ol, > hr, > h2, > h3
+  .toc
+    color: $color_white
+    a
+      color: $color_white
+  > p, > div, > ul, > ol, > hr, > h2, > h3, > h4
     margin: 2em 0
-  h2, h3
+  h2, h3, h4
     padding-left: 1em
     border-left: 4px solid $color_background_highlight
     color: $color_white
@@ -180,6 +184,10 @@ body
     &:before, &:after
       color: $color_white
       content: '\20+\20+\20'
+  h4
+    &:before, &:after
+      color: $color_white
+      content: '\20+\20+\20+\20'
   hr
     border: none
     background: $color_background_highlight

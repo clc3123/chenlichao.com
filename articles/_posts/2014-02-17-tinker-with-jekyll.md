@@ -15,9 +15,11 @@ description: Jekyll vs Middleman，兼谈Liquid Template，博客的第一篇文
 *   [Jekyll](http://jekyllrb.com) 1.4.3
 *   [Liquid](https://github.com/Shopify/liquid) 2.5.5
 
+## Jekyll vs Middleman
+
 接下来，我将就模版、开发环境两个方面将Jekyll和我熟悉的Middleman做一次对比：
 
-## 模版语言 Liquid vs ERB, Haml
+### 模版语言 Liquid vs ERB, Haml
 
 博客搭建完了，我分析了下，这其中最让人虐心的，就是Jekyll的模版语言： `Liquid` 。
 
@@ -188,7 +190,7 @@ Liquid默认为ruby的各种内置数据类型扩展了 `to_liquid` 的方法，
 
 再看Middleman，因为使用[Haml](http://haml.info/)，可以少写很多的html代码，也不用忍受Liquid那恶心的括号和tag；因为结合了Asset Pipeline，Haml2Html也无需额外动手。所以说一旦上手，是件很爽的事。
 
-## 开发环境 Development Environment
+### 开发环境 Development Environment
 
 Middleman在这方面大幅领先，让我们来看看：
 
@@ -221,7 +223,7 @@ Middleman在这方面大幅领先，让我们来看看：
       end
     end
 
--------------------------------
+## 总结
 
 对比完两个方面，还是总结一下吧：
 
@@ -237,9 +239,7 @@ Middleman在这方面大幅领先，让我们来看看：
 
 别忘了Liquid，好东西！
 
---------------------------------
-
-updated at 2014-02-18:
+## updated at 2014-02-18
 
 在Liquid源码中找到了 `for` tag的一点[小技巧](https://github.com/Shopify/liquid/blob/e8a3fd10d497a2f5dbda71d224eb544bb63f34c9/lib/liquid/tags/for.rb#L23-L25)：
 
@@ -253,9 +253,7 @@ You can also define a limit and offset much like SQL. Remember that offset start
 
 能把首页 `index.html` 中的虐心代码缩短一些了。:)
 
------------------------------------
-
-updated at 2014-02-19:
+## updated at 2014-02-19
 
 首页 `index.html` 中的代码升级，主要是变量命名上的变化，如下：
 
