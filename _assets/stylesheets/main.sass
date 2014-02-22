@@ -58,7 +58,7 @@ body
   font-size: 16px 
   line-height: 1.5
   color: $color_text
-  background: $color_background_dark
+  background: $color_background_light
 
 #header, #content, #footer
   padding: 0 1em
@@ -66,6 +66,8 @@ body
   max-width: 800px
   margin: 0 auto
 
+#header
+  background: $color_background_dark
 #header-inside
   @extend %clearfix
   border-bottom: 4px dashed $color_border
@@ -99,10 +101,13 @@ body
     color: $color_background_highlight
     font-size: 0.875em
 
+#content
+  overflow: hidden
+  background: $color_background_dark
+
 #footer
   border-top: 4px dashed $color_border
-  background: $color_background_light
-  @include box-shadow(0 1px 10px rgba(black, 0.4), 0 -1px 0 rgba(white, 0.2))
+  @include box-shadow(0 -10px 10px rgba(black, 0.2), 0 -1px 0 rgba(white, 0.2))
 #footer-inside
   @extend %clearfix
   font-size: 0.875em
@@ -253,8 +258,6 @@ code
     font-size: 5em
 
 @media only screen and (max-width: 640px)
-  #content
-    overflow: hidden
   code
     white-space: pre-wrap
     word-wrap: break-word
