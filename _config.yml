@@ -21,6 +21,7 @@ exclude:
   - Rakefile
   - favicon.psd
   - project.aco
+  - sitemap.xml.erb
 encoding: UTF-8
 assets:
   gzip: false

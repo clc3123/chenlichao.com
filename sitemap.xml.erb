@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<% pages.each do |page| %>
+  <url>
+    <loc>http://chenlichao.com<%= page[:url] %></loc>
+    <lastmod><%= page[:lastmod] %></lastmod>
+    <priority><%= page[:priority] %></priority>
+    <changefreq><%= page[:changefreq] %></changefreq>
+  </url>
+<% end %>
+</urlset>

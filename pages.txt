@@ -1,0 +1,7 @@
+---
+layout: nil
+---
+
+{% for page in site.posts %}{{ page.url }} {{ page.path }}
+{% endfor %}{% assign sorted_pages = site.html_pages | sort: 'url' %}{% for page in sorted_pages %}{{ page.url }} {{ page.path }}
+{% endfor %}

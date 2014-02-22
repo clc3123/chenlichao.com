@@ -12,4 +12,5 @@ then
   rm -rf _site
   bundle exec jekyll build --config _config.yml,_config_production.yml
   echo $CLCAPP_MOST_RECENT_COMMIT > .most_recent_commit
+  rake sitemap
 fi
