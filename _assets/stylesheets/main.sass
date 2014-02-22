@@ -107,16 +107,22 @@ body
   @extend %clearfix
   font-size: 0.875em
   color: $color_background_highlight
-  padding: 2em 0
-  ul
-    list-style: none
-    padding: 0
-    margin: 0
-  li
-    float: left
-    margin-right: 1em
   a
     color: $color_background_highlight
+  section
+    @extend %clearfix
+    margin: 2em 0
+    h6
+      float: left
+      margin-right: 1em
+    ul
+      float: left
+      list-style: none
+      padding: 0
+      margin: 0
+    li
+      float: left
+      margin-right: 1em
 
 .home
   section
@@ -255,3 +261,11 @@ code
     word-break: break-word
     pre &
       font-size: 0.857em
+  #footer-inside
+    section
+      h6
+        float: none
+      ul
+        float: none
+      li
+        float: none
