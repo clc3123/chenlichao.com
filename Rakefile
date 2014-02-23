@@ -31,7 +31,6 @@ task :build_sitemap do
   require 'erb'
   require 'fileutils'
   require 'zlib'
-  sleep 3
   source = "_site/pages.txt"
   exit unless File.exists? source
   pages = []
@@ -72,7 +71,6 @@ task :build_sitemap do
     gz.orig_name = "sitemap.xml"
     gz.write File.read("_site/sitemap.xml")
   end
-  FileUtils.rm_f source
 end
 
 desc "submit sitemap"
