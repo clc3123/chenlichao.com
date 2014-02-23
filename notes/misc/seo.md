@@ -14,4 +14,4 @@ ruby中将日期转换为此格式可用：
 
 或
 
-    datetime.strftime(‘%FT%T’)
+    datetime.strftime("%FT%T%:z")
