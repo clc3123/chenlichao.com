@@ -4,4 +4,4 @@ CLC_DIR=/home/chenlichao/chenlichao
 
 source /usr/local/rvm/environments/$(cat $CLC_DIR/.ruby-version)
 
-cd $CLCAPP_DIR && rake build
+cd $CLC_DIR && rake build
