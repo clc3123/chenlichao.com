@@ -20,7 +20,7 @@ task :build_site do
     FileUtils.rm_rf("_site")
     system "bundle exec jekyll build --config _config.yml,_config_production.yml"
     File.open ".last_commit", "w" do |f|
-      f.print last_commit
+      f.write last_commit
     end
   end
 end
@@ -66,10 +66,11 @@ task :build_sitemap do
   template = File.read "sitemap.xml.erb"
   content = ERB.new(template).result binding
   File.open "_site/sitemap.xml", "w" do |f|
-    f.print content
+    f.write content
   end
-  File.open "_site/sitemap.xml.gz", "w" do |f|
-    f.print Zlib::Deflate.deflate(content, 9)
+  Zlib::GzipWriter.open "_site/sitemap.xml.gz", 9 do |gz|
+    gz.orig_name = "sitemap.xml"
+    gz.write File.read("_site/sitemap.xml")
   end
   FileUtils.rm_f source
 end
@@ -101,7 +102,7 @@ task :submit_sitemap do
       n -= 1
     end
     File.open ".last_submit", "w" do |f|
-      f.print last_submit
+      f.write last_submit
     end
   end
 end
