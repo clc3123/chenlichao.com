@@ -1,4 +1,3 @@
-
 task :default => :preview
 
 desc "preview the site"
