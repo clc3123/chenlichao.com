@@ -45,7 +45,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
     <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %} - {{ content | strip_html | split: " " | join: " " | truncatewords: 30 }}">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     {% stylesheet application.css %}
-    {% javascript modernizr-2.7.1.min.js %}
+    {% javascript application.js %}
   </head>
   <body>
     {% include header.html %}
@@ -55,7 +55,5 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
     </div></div>
 
     {% include footer.html %}
-
-    {% javascript application.js %}
   </body>
 </html>
