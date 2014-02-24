@@ -24,35 +24,47 @@ task :build, [:phase] do |t, args|
     File.open ".last_built_commit", "w" do |f|
       f.write last_commit
     end
+
     puts "building sitemap"
     source = "_site/pages.txt"
+    layout_datetime = %w(
+      _layouts/default.html
+      _config.yml
+      _config_production.yml
+    ).map do |f|
+      DateTime.parse(`git log -n 1 --pretty=%ci -- #{f}`.strip)
+    end.max
+    post_layout_datetime = [layout_datetime, DateTime.parse(`git log -n 1 --pretty=%ci -- _layouts/post.html`.strip)].max
+
     pages = []
     File.open source do |f|
       f.each do |page|
         page = page.strip
         next if page == ""
         url, path = page.split(" ")
-        datetime = `git log -1 --pretty=%ci -- #{path}`
-        lastmod = DateTime.parse(datetime).rfc3339
+        datetime = DateTime.parse(`git log -n 1 --pretty=%ci -- #{path}`.strip)
+        datetime = [datetime, layout_datetime].max
         case url
         when "/index.html"
           url = "/"
           changefreq = "daily"
           priority = "1.0"
-          lastmod = Time.now.to_datetime.rfc3339
+          datetime = Time.now.to_datetime
         when "/404.html"
           next
         when /^\/articles\//
           changefreq = "weekly"
           priority = "0.8"
+          datetime = [datetime, post_layout_datetime].max
         when /^\/notes\//
           changefreq = "weekly"
           priority = "0.6"
+          datetime = [datetime, post_layout_datetime].max
         else
           changefreq = "monthly"
           priority = "0.4"
         end
-        page_item = {url: url, changefreq: changefreq, priority: priority, lastmod: lastmod}
+        page_item = {url: url, changefreq: changefreq, priority: priority, lastmod: datetime.rfc3339}
         if page_item[:url] == "/"
           pages.unshift page_item
         else
