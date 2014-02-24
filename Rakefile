@@ -1,105 +1,113 @@
 task :default => :preview
 
-desc "preview the site"
+desc "preview"
 task :preview do
   system "bundle exec jekyll serve --drafts --watch"
 end
 
 desc "build"
-task :build => [:build_site, :build_sitemap]
-
-desc "build site"
-task :build_site do
-  require 'fileutils'
-  system "git pull origin master"
-  last_commit = `git log -n 1 --pretty=%H`.strip
-  if File.exists?(".last_commit") && File.read(".last_commit") == last_commit
-    exit
-  else
-    FileUtils.rm_rf("_site")
-    system "bundle exec jekyll build --config _config.yml,_config_production.yml"
-    File.open ".last_commit", "w" do |f|
-      f.write last_commit
-    end
-  end
-end
-
-desc "build sitemap.xml"
-task :build_sitemap do
+task :build, [:phase] do |t, args|
+  args.with_defaults(:phase => "production")
+  test = (args.phase == "test" ? true : false)
   require 'date'
   require 'erb'
   require 'fileutils'
   require 'zlib'
-  source = "_site/pages.txt"
-  exit unless File.exists? source
-  pages = []
-  File.open source do |f|
-    f.each do |page|
-      page = page.strip
-      next if page == ""
-      url, path = page.split(" ")
-      datetime = `git log -1 --pretty=%ci -- #{path}`
-      lastmod = DateTime.parse(datetime).rfc3339
-      case url
-      when "/index.html"
-        url = "/"
-        changefreq = "daily"
-        priority = "1.0"
-        lastmod = Time.now.to_datetime.rfc3339
-      when "/404.html"
-        next
-      when /^\/articles\//
-        changefreq = "weekly"
-        priority = "0.8"
-      when /^\/notes\//
-        changefreq = "weekly"
-        priority = "0.6"
-      else
-        changefreq = "monthly"
-        priority = "0.4"
-      end
-      pages << {url: url, changefreq: changefreq, priority: priority, lastmod: lastmod}
+  system "git pull origin master" unless test
+  last_commit = `git log -n 1 --pretty=%H`.strip
+  if File.exists?(".last_built_commit") && File.read(".last_built_commit") == last_commit
+    exit
+  else
+    puts "building site on commit #{last_commit}"
+    FileUtils.rm_rf("_site")
+    system "bundle exec jekyll build --config _config.yml,_config_production.yml"
+    File.open ".last_built_commit", "w" do |f|
+      f.write last_commit
     end
+    puts "building sitemap"
+    source = "_site/pages.txt"
+    pages = []
+    File.open source do |f|
+      f.each do |page|
+        page = page.strip
+        next if page == ""
+        url, path = page.split(" ")
+        datetime = `git log -1 --pretty=%ci -- #{path}`
+        lastmod = DateTime.parse(datetime).rfc3339
+        case url
+        when "/index.html"
+          url = "/"
+          changefreq = "daily"
+          priority = "1.0"
+          lastmod = Time.now.to_datetime.rfc3339
+        when "/404.html"
+          next
+        when /^\/articles\//
+          changefreq = "weekly"
+          priority = "0.8"
+        when /^\/notes\//
+          changefreq = "weekly"
+          priority = "0.6"
+        else
+          changefreq = "monthly"
+          priority = "0.4"
+        end
+        page_item = {url: url, changefreq: changefreq, priority: priority, lastmod: lastmod}
+        if page_item[:url] == "/"
+          pages.unshift page_item
+        else
+          pages << page_item
+        end
+      end
+    end
+    template = File.read "sitemap.xml.erb"
+    content = ERB.new(template).result binding
+    File.open "_site/sitemap.xml", "w" do |f|
+      f.write content
+    end
+    Zlib::GzipWriter.open "_site/sitemap.xml.gz", 9 do |gz|
+      gz.orig_name = "sitemap.xml"
+      gz.write File.read("_site/sitemap.xml")
+    end
+    Zlib::GzipReader.open "_site/sitemap.xml.gz" do |gz|
+      puts gz.read(512)
+    end if test
   end
-  template = File.read "sitemap.xml.erb"
-  content = ERB.new(template).result binding
-  File.open "_site/sitemap.xml", "w" do |f|
-    f.write content
-  end
-  Zlib::GzipWriter.open "_site/sitemap.xml.gz", 9 do |gz|
-    gz.orig_name = "sitemap.xml"
-    gz.write File.read("_site/sitemap.xml")
-  end
+  FileUtils.rm_f ".last_built_commit" if test
 end
 
 desc "submit sitemap"
-task :submit_sitemap do
+task :submit_sitemap, [:phase] do |t, args|
+  args.with_defaults(:phase => "production")
+  test = (args.phase == "test" ? true : false)
+  Rake::Task["build"].invoke("test") if test
   require 'openssl'
   require 'net/http'
   require 'uri'
   sitemap = "_site/sitemap.xml"
-  n = 3
-  while true
-    exit if n == 0
-    break if File.exists?(sitemap)
-    sleep 3
-    n -= 1
-  end
-  last_submit = OpenSSL::Digest.hexdigest('md5', File.read(sitemap))
-  if File.exists?(".last_submit") && File.read(".last_submit") == last_submit
+  exit unless File.exists?(sitemap)
+  last_sitemap = OpenSSL::Digest.hexdigest('md5', File.read(sitemap))
+  if File.exists?(".last_submitted_sitemap") && File.read(".last_submitted_sitemap") == last_sitemap
     exit
   else
+    puts "submitting sitemap.xml"
     uri = "http://www.google.com/webmasters/tools/ping?sitemap=" + URI.encode_www_form_component("http://chenlichao.com/sitemap.xml")
     n = 3
+    puts uri
     while true
       exit if n == 0
       res = Net::HTTP.get_response URI(uri)
-      break if res.code.to_i == 200
+      if res.code.to_i == 200
+        puts res.code
+        puts res.body
+        break 
+      end
       sleep 3
       n -= 1
     end
-    File.open ".last_submit", "w" do |f|
-      f.write last_submit
+    File.open ".last_submitted_sitemap", "w" do |f|
+      f.write last_sitemap
     end
   end
+  FileUtils.rm_f ".last_submitted_sitemap" if test
 end
